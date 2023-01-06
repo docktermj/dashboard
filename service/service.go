@@ -2,6 +2,7 @@
 package service
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -13,8 +14,19 @@ import (
 	"github.com/docktermj/dashboard/models/fileindex"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/senzing/go-logging/logger"
 	"github.com/spf13/viper"
 )
+
+// ----------------------------------------------------------------------------
+// Types
+// ----------------------------------------------------------------------------
+
+// ServiceImpl is the default implementation of the Service interface.
+type HttpServerImpl struct {
+	Port     int
+	LogLevel logger.Level
+}
 
 // ----------------------------------------------------------------------------
 // Helper functions
@@ -106,7 +118,8 @@ func webRouter() chi.Router {
 // ----------------------------------------------------------------------------
 
 // Print a version string.
-func Service(port int) {
+func (httpServer *HttpServerImpl) Serve(ctx context.Context) error {
+	var err error = nil
 
 	// Set up a router to route http request.
 
@@ -144,7 +157,9 @@ func Service(port int) {
 
 	// Start router.
 
-	http.ListenAndServe(":"+strconv.Itoa(port), router)
+	http.ListenAndServe(":"+strconv.Itoa(httpServer.Port), router)
+
+	return err
 }
 
 // ----------------------------------------------------------------------------
@@ -152,17 +167,17 @@ func Service(port int) {
 // ----------------------------------------------------------------------------
 
 // The Command sofware design pattern's Execute() method.
-func Execute() {
+// func Execute() {
 
-	// Print context parameters.
-	// TODO: Formalize entry parameters
+// 	// Print context parameters.
+// 	// TODO: Formalize entry parameters
 
-	// Get parameters from viper.
+// 	// Get parameters from viper.
 
-	var port = viper.GetInt("dashboard-port")
+// 	var port = viper.GetInt("dashboard-port")
 
-	// Perform command.
+// 	// Perform command.
 
-	Service(port)
+// 	Service(port)
 
-}
+// }

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -34,7 +35,7 @@ var RootCmd = &cobra.Command{
 	Long:  `For more information, visit https://github.com/Senzing/dashboard`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error = nil
-		// ctx := context.TODO()
+		ctx := context.TODO()
 
 		// logLevel, ok := logger.TextToLevelMap[viper.GetString("log-level")]
 		// if !ok {
@@ -52,7 +53,11 @@ var RootCmd = &cobra.Command{
 		// }
 		// grpcserver.Serve(ctx)
 
-		service.Execute()
+		httpServer := &service.HttpServerImpl{
+			Port: viper.GetInt("dashboard-port"),
+		}
+
+		httpServer.Serve(ctx)
 
 		return err
 	},
