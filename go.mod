@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/docktermj/go-logger v0.0.0-20221012153605-b8eff37900f0
 	github.com/go-chi/chi v4.1.2+incompatible
-	github.com/mattn/go-sqlite3 v2.0.2+incompatible
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
