@@ -128,3 +128,62 @@ The following software programs need to be installed:
     ```
 
     Note: `sudo make docker-build-development-cache` can be used to create cached docker layers.
+
+### Get static files
+
+1. Set these environment variable values:
+
+    ```console
+    export GIT_ACCOUNT=docktermj
+    export GIT_REPOSITORY=dashboard
+    export GIT_ACCOUNT_DIR=~/${GIT_ACCOUNT}.git
+    export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
+
+    ```
+
+1. Bootstrap.
+   Example:
+
+    ```console
+    export BOOTSTRAP_VERSION=4.3.1
+
+    wget \
+        --output-document /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist.zip \
+        https://github.com/twbs/bootstrap/releases/download/v${BOOTSTRAP_VERSION}/bootstrap-${BOOTSTRAP_VERSION}-dist.zip
+
+    unzip \
+        /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist.zip \
+        -d /tmp
+
+    cp /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/css/bootstrap.min.css  ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.css
+    cp /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/js/bootstrap.min.js    ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.js
+
+   ```
+
+1. JQuery.
+   Example:
+
+    ```console
+
+    wget \
+        --output-document ${GIT_REPOSITORY_DIR}/static/js/jquery-3.6.3.min.js \
+        https://code.jquery.com/jquery-3.6.3.min.js
+
+    wget \
+        --output-document ${GIT_REPOSITORY_DIR}/static/css/jquery.dataTables.min.css \
+        https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css
+
+    wget \
+        --output-document ${GIT_REPOSITORY_DIR}/static/js/jquery.dataTables.min.js \
+        https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
+
+   ```
+
+1. Popper.
+   Example:
+
+    ```console
+    wget \
+        --output-document ${GIT_REPOSITORY_DIR}/static/js/popper.min.js  \
+        https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js
+   ```
