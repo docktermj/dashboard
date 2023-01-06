@@ -167,7 +167,7 @@ The following software programs need to be installed:
 
     wget \
         --output-document ${GIT_REPOSITORY_DIR}/static/js/jquery-3.6.3.min.js \
-        https://code.jquery.com/jquery-3.6.3.min.js
+        https://code.jquery.com/jquery.min.js
 
     wget \
         --output-document ${GIT_REPOSITORY_DIR}/static/css/jquery.dataTables.min.css \
