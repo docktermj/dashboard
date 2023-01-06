@@ -155,8 +155,8 @@ The following software programs need to be installed:
         /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist.zip \
         -d /tmp
 
-    cp /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/css/bootstrap.min.css  ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.css
-    cp /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/js/bootstrap.min.js    ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.js
+    cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/css/bootstrap.min.css  ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.css
+    cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/js/bootstrap.min.js    ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.js
 
    ```
 
