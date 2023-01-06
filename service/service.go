@@ -4,15 +4,15 @@ package service
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/docktermj/dashboard/box"
 	"github.com/docktermj/dashboard/models/fileindex"
-	log "github.com/docktermj/go-logger/logger"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/viper"
 )
 
@@ -24,7 +24,7 @@ func viperAsJson() string {
 	viperConfig := viper.AllSettings()
 	viperByteArray, err := json.Marshal(viperConfig)
 	if err != nil {
-		log.Fatalf("Unable to marshal viper config to JSON: %v", err)
+		fmt.Printf("Unable to marshal viper config to JSON: %v", err)
 	}
 	return string(viperByteArray)
 }
@@ -106,16 +106,7 @@ func webRouter() chi.Router {
 // ----------------------------------------------------------------------------
 
 // Print a version string.
-func Service(port string, sqliteFileName string) {
-	// Perform command.
-
-	// Prepare SQLite database.
-
-	database, err := sql.Open("sqlite3", sqliteFileName)
-	if err != nil {
-		log.Errorf("%s cannot be opened. Error:  %v", sqliteFileName, err)
-		return
-	}
+func Service(port int) {
 
 	// Set up a router to route http request.
 
@@ -135,7 +126,6 @@ func Service(port string, sqliteFileName string) {
 
 	// Routes
 
-	router.Mount("/api", apiRouter(database))
 	router.Mount("/css", cssRouter())
 	router.Mount("/js", jsRouter())
 	router.Mount("/images", imagesRouter())
@@ -154,7 +144,7 @@ func Service(port string, sqliteFileName string) {
 
 	// Start router.
 
-	http.ListenAndServe(":"+port, router)
+	http.ListenAndServe(":"+strconv.Itoa(port), router)
 }
 
 // ----------------------------------------------------------------------------
@@ -167,34 +157,12 @@ func Execute() {
 	// Print context parameters.
 	// TODO: Formalize entry parameters
 
-	log.Info(viperAsJson())
-
 	// Get parameters from viper.
 
-	var port = viper.GetString("port")
-	var sqliteFileName = viper.GetString("sqlite_file_name")
-
-	// Check parameters.
-
-	errors := 0
-
-	if port == "" {
-		errors += 1
-		log.Warn("--port not set.")
-	}
-	if sqliteFileName == "" {
-		errors += 1
-		log.Warn("--sqlite-file-name not set.")
-	}
-
-	// If any errors, exit.
-
-	if errors > 0 {
-		return
-	}
+	var port = viper.GetInt("dashboard-port")
 
 	// Perform command.
 
-	Service(port, sqliteFileName)
+	Service(port)
 
 }

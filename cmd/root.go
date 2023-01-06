@@ -2,56 +2,98 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/docktermj/go-logger/logger"
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"log"
 	"os"
+	"strings"
+
+	"github.com/docktermj/dashboard/service"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
 	configurationFile string
+	buildVersion      string = "0.0.0"
+	buildIteration    string = "0"
 )
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "fileindex",
-	Short: "Manage a database of file information",
-	Long: `The steps for managing file information:
+func makeVersion(version string, iteration string) string {
+	var result string = ""
+	if buildIteration == "0" {
+		result = version
+	} else {
+		result = fmt.Sprintf("%s-%s", buildVersion, buildIteration)
+	}
+	return result
+}
 
-1) Scan files
-2) Populate database
-3) Query
+// RootCmd represents the base command when called without any subcommands
+var RootCmd = &cobra.Command{
+	Use:   "dashboard",
+	Short: "Bring up the Senzing dashboard",
+	Long:  `For more information, visit https://github.com/Senzing/dashboard`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		var err error = nil
+		// ctx := context.TODO()
 
-For more information, visit https://github.com/docktermj/go-fileindex`,
+		// logLevel, ok := logger.TextToLevelMap[viper.GetString("log-level")]
+		// if !ok {
+		// 	logLevel = logger.LevelInfo
+		// }
+
+		// grpcserver := &grpcserver.GrpcServerImpl{
+		// 	EnableG2config:     viper.GetBool("enable-g2config"),
+		// 	EnableG2configmgr:  viper.GetBool("enable-g2configmgr"),
+		// 	EnableG2diagnostic: viper.GetBool("enable-g2diagnostic"),
+		// 	EnableG2engine:     viper.GetBool("enable-g2engine"),
+		// 	EnableG2product:    viper.GetBool("enable-g2product"),
+		// 	Port:               viper.GetInt("grpc-port"),
+		// 	LogLevel:           logLevel,
+		// }
+		// grpcserver.Serve(ctx)
+
+		service.Execute()
+
+		return err
+	},
+	Version: makeVersion(buildVersion, buildIteration),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+	err := RootCmd.Execute()
+	if err != nil {
 		os.Exit(1)
 	}
 }
 
 func init() {
-
-	// Initialize cobra.
-
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	// Define flags for command.
 
-	rootCmd.PersistentFlags().StringVar(&configurationFile, "config", "", "config file (default is $HOME/.fileindex.yaml)")
+	RootCmd.Flags().Int("dashboard-port", 8258, "port used to serve HTTP [SENZING_TOOLS_DASHBOARD_PORT]")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+	// Integrate with Viper.
 
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	replacer := strings.NewReplacer("-", "_")
+	viper.SetEnvKeyReplacer(replacer)
+	viper.SetEnvPrefix("SENZING_TOOLS")
+
+	// Define flags in Viper.
+
+	viper.SetDefault("dashboard-port", 8258)
+	viper.BindPFlag("dashboard-port", RootCmd.Flags().Lookup("dashboard-port"))
+
+	viper.SetDefault("log-level", "INFO")
+	viper.BindPFlag("log-level", RootCmd.Flags().Lookup("log-level"))
+
+	// Set version template.
+
+	versionTemplate := `{{printf "%s: %s - version %s\n" .Name .Short .Version}}`
+	RootCmd.SetVersionTemplate(versionTemplate)
+
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -61,41 +103,31 @@ func initConfig() {
 
 	log.SetFlags(log.Lshortfile | log.Ldate | log.Lmicroseconds | log.LUTC)
 
-	// Configure the logger. If not configured, no functions will print.
-
-	logger.SetLevel(logger.LevelInfo)
-
 	// Load configuration file.
 
 	if configurationFile != "" {
-		viper.SetConfigFile(configurationFile) // Use config file from the flag.
+		// Use config file from the flag.
+		viper.SetConfigFile(configurationFile)
 	} else {
-
 		// Find home directory.
+		home, err := os.UserHomeDir()
+		cobra.CheckErr(err)
 
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Configuration file will be ${HOME}/.fileindex.yaml
-
-		viper.SetConfigName(".fileindex")
-		viper.SetConfigType("yaml")
+		// Search config in home directory with name ".servegrpc" (without extension).
+		viper.AddConfigPath(home + "/.senzing-tools")
 		viper.AddConfigPath(home)
-
+		viper.AddConfigPath("/etc/senzing-tools")
+		viper.SetConfigType("yaml")
+		viper.SetConfigName("dashboard")
 	}
 
-	// Enable automatic inclusing of environment variables.
+	// Read in environment variables that match "SENZING_TOOLS_*" pattern.
 
-	viper.SetEnvPrefix("gofileindex")
-	viper.BindEnv("DEBUG")
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv()
 
 	// If a config file is found, read it in.
 
 	if err := viper.ReadInConfig(); err == nil {
-		logger.Info("Using config file:", viper.ConfigFileUsed())
+		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 }
