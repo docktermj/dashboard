@@ -186,4 +186,5 @@ The following software programs need to be installed:
     wget \
         --output-document ${GIT_REPOSITORY_DIR}/static/js/popper.min.js  \
         https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js
+
    ```
