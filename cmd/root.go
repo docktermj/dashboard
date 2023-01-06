@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/docktermj/dashboard/service"
+	"github.com/senzing/go-logging/logger"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -37,26 +38,15 @@ var RootCmd = &cobra.Command{
 		var err error = nil
 		ctx := context.TODO()
 
-		// logLevel, ok := logger.TextToLevelMap[viper.GetString("log-level")]
-		// if !ok {
-		// 	logLevel = logger.LevelInfo
-		// }
-
-		// grpcserver := &grpcserver.GrpcServerImpl{
-		// 	EnableG2config:     viper.GetBool("enable-g2config"),
-		// 	EnableG2configmgr:  viper.GetBool("enable-g2configmgr"),
-		// 	EnableG2diagnostic: viper.GetBool("enable-g2diagnostic"),
-		// 	EnableG2engine:     viper.GetBool("enable-g2engine"),
-		// 	EnableG2product:    viper.GetBool("enable-g2product"),
-		// 	Port:               viper.GetInt("grpc-port"),
-		// 	LogLevel:           logLevel,
-		// }
-		// grpcserver.Serve(ctx)
-
-		httpServer := &service.HttpServerImpl{
-			Port: viper.GetInt("dashboard-port"),
+		logLevel, ok := logger.TextToLevelMap[viper.GetString("log-level")]
+		if !ok {
+			logLevel = logger.LevelInfo
 		}
 
+		httpServer := &service.HttpServerImpl{
+			Port:     viper.GetInt("dashboard-port"),
+			LogLevel: logLevel,
+		}
 		httpServer.Serve(ctx)
 
 		return err

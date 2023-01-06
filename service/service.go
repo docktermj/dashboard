@@ -15,6 +15,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/senzing/go-logging/logger"
+	"github.com/senzing/go-logging/messagelogger"
 	"github.com/spf13/viper"
 )
 
@@ -120,6 +121,15 @@ func webRouter() chi.Router {
 // Print a version string.
 func (httpServer *HttpServerImpl) Serve(ctx context.Context) error {
 	var err error = nil
+	logger, _ := messagelogger.NewSenzingApiLogger(ProductId, IdMessages, IdStatuses, httpServer.LogLevel)
+
+	// Print information for user.
+
+	fmt.Printf("\n"+IdMessages[2003]+"\n\n", httpServer.Port)
+
+	// Log entry parameters.
+
+	logger.Log(2000, httpServer)
 
 	// Set up a router to route http request.
 
@@ -161,23 +171,3 @@ func (httpServer *HttpServerImpl) Serve(ctx context.Context) error {
 
 	return err
 }
-
-// ----------------------------------------------------------------------------
-// Command pattern "Execute" function.
-// ----------------------------------------------------------------------------
-
-// The Command sofware design pattern's Execute() method.
-// func Execute() {
-
-// 	// Print context parameters.
-// 	// TODO: Formalize entry parameters
-
-// 	// Get parameters from viper.
-
-// 	var port = viper.GetInt("dashboard-port")
-
-// 	// Perform command.
-
-// 	Service(port)
-
-// }

@@ -76,7 +76,7 @@ build-linux:
 	     -X 'github.com/senzing/servegrpc/cmd.buildIteration=${BUILD_ITERATION}' \
 	    " \
 	  -o $(GO_PACKAGE_NAME)
-	mkdir -p $(TARGET_DIRECTORY)/linux || true
+	@mkdir -p $(TARGET_DIRECTORY)/linux || true
 	@mv $(GO_PACKAGE_NAME) $(TARGET_DIRECTORY)/linux
 
 # -----------------------------------------------------------------------------
