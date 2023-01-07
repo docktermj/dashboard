@@ -12,8 +12,8 @@ import (
 
 	"github.com/docktermj/dashboard/box"
 	"github.com/docktermj/dashboard/models/fileindex"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/senzing/go-logging/logger"
 	"github.com/senzing/go-logging/messagelogger"
 	"github.com/spf13/viper"

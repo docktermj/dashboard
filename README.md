@@ -145,19 +145,13 @@ The following software programs need to be installed:
    Example:
 
     ```console
-    export BOOTSTRAP_VERSION=4.3.1
+    wget \
+        --output-document ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.css \
+        https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css
 
     wget \
-        --output-document /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist.zip \
-        https://github.com/twbs/bootstrap/releases/download/v${BOOTSTRAP_VERSION}/bootstrap-${BOOTSTRAP_VERSION}-dist.zip
-
-    unzip \
-        /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist.zip \
-        -d /tmp
-
-    cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/css/bootstrap.min.css  ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.css
-
-    cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-dist/js/bootstrap.min.js    ${GIT_REPOSITORY_DIR}/static/js/bootstrap.min.js
+        --output-document ${GIT_REPOSITORY_DIR}/static/js/bootstrap.bundle.min.js \
+        https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js
 
    ```
 
@@ -165,7 +159,6 @@ The following software programs need to be installed:
    Example:
 
     ```console
-
     wget \
         --output-document ${GIT_REPOSITORY_DIR}/static/js/jquery.min.js \
         https://code.jquery.com/jquery-3.6.3.min.js
@@ -177,15 +170,5 @@ The following software programs need to be installed:
     wget \
         --output-document ${GIT_REPOSITORY_DIR}/static/js/jquery.dataTables.min.js \
         https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
-
-   ```
-
-1. Popper.
-   Example:
-
-    ```console
-    wget \
-        --output-document ${GIT_REPOSITORY_DIR}/static/js/popper.min.js  \
-        https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js
 
    ```
