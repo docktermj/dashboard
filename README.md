@@ -141,7 +141,7 @@ The following software programs need to be installed:
 
     ```
 
-1. Bootstrap.
+1. Bootstrap (with Popper).
    Example:
 
     ```console

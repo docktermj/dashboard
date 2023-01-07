@@ -3,7 +3,6 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 	"time"
 
 	"github.com/docktermj/dashboard/box"
-	"github.com/docktermj/dashboard/models/fileindex"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/senzing/go-logging/logger"
@@ -45,29 +43,6 @@ func viperAsJson() string {
 // ----------------------------------------------------------------------------
 // Routers
 // ----------------------------------------------------------------------------
-
-func apiRouter(database *sql.DB) chi.Router {
-
-	handlerDatabase := &fileindex.DB{database}
-	handler := &ApiHandler{
-		datastore: handlerDatabase,
-	}
-
-	router := chi.NewRouter()
-	router.Get("/", handler.root)
-	router.Get("/count", handler.count)
-	router.Get("/duplicates/sha256", handler.duplicatesSha256)
-	router.Get("/everything", handler.everything)
-	router.Get("/id/{id}", handler.id)
-	router.Get("/modified/{modified}", handler.modified)
-	router.Get("/name/{name}", handler.name)
-	router.Get("/path/{path}", handler.path)
-	router.Get("/sha256/{sha256}", handler.sha256)
-	router.Get("/size/{size}", handler.size)
-	router.Get("/unique/sha256", handler.uniqueSha256)
-	router.Get("/volume/{volume}", handler.volume)
-	return router
-}
 
 func cssRouter() chi.Router {
 	router := chi.NewRouter()
