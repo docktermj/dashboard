@@ -53,10 +53,18 @@ func cssRouter() chi.Router {
 	return router
 }
 
-func imagesRouter() chi.Router {
+func pngRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/png")
+		responseWriter.Write(box.Get(request.RequestURI))
+	})
+	return router
+}
+
+func includeRouter() chi.Router {
+	router := chi.NewRouter()
+	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Write(box.Get(request.RequestURI))
 	})
 	return router
@@ -66,6 +74,15 @@ func jsRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/javascript")
+		responseWriter.Write(box.Get(request.RequestURI))
+	})
+	return router
+}
+
+func svgRouter() chi.Router {
+	router := chi.NewRouter()
+	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
+		responseWriter.Header().Set("Content-Type", "image/svg+xml")
 		responseWriter.Write(box.Get(request.RequestURI))
 	})
 	return router
@@ -126,7 +143,9 @@ func (httpServer *HttpServerImpl) Serve(ctx context.Context) error {
 
 	router.Mount("/css", cssRouter())
 	router.Mount("/js", jsRouter())
-	router.Mount("/images", imagesRouter())
+	router.Mount("/png", pngRouter())
+	router.Mount("/include", includeRouter())
+	router.Mount("/svg", svgRouter())
 	router.Mount("/web", webRouter())
 
 	// Specific URIs.
