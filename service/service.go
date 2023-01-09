@@ -1,4 +1,4 @@
-// The version package simply prints the version of the go-fileindex binary file.
+// The version package simply prints the version of the dashboard binary file.
 package service
 
 import (

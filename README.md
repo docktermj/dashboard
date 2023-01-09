@@ -61,7 +61,7 @@ The following software programs need to be installed:
    Example:
 
     ```console
-    ${GIT_REPOSITORY_DIR}/target/linux/go-fileindex --help
+    ${GIT_REPOSITORY_DIR}/target/linux/dashboard --help
     ```
 
 1. Run service.
@@ -69,7 +69,7 @@ The following software programs need to be installed:
 
     ```console
     cd ${GIT_REPOSITORY_DIR}
-    ./target/linux/go-fileindex service
+    ./target/linux/dashboard
     ```
 
    View [localhost:3000](http://localhost:3000)

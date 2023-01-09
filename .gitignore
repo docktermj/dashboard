@@ -22,8 +22,5 @@ golang.org/
 box/blob.go
 tmp/
 
-go-fileindex.json
-go-fileindex.db
-
 *.db
 *.json
