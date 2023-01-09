@@ -68,7 +68,7 @@ func init() {
 
 	// Define flags for command.
 
-	RootCmd.Flags().Int("dashboard-port", 8258, "port used to serve HTTP [SENZING_TOOLS_DASHBOARD_PORT]")
+	RootCmd.Flags().Int("dashboard-port", 8259, "port used to serve HTTP [SENZING_TOOLS_DASHBOARD_PORT]")
 
 	// Integrate with Viper.
 
@@ -78,7 +78,7 @@ func init() {
 
 	// Define flags in Viper.
 
-	viper.SetDefault("dashboard-port", 8258)
+	viper.SetDefault("dashboard-port", 8259)
 	viper.BindPFlag("dashboard-port", RootCmd.Flags().Lookup("dashboard-port"))
 
 	viper.SetDefault("log-level", "INFO")
