@@ -82,9 +82,9 @@ The following software programs need to be installed:
 
     ```console
     docker run \
-    --publish 8259:80 \
-    --volume ${GIT_REPOSITORY_DIR}/static:/usr/share/nginx/html:ro \
-    nginx
+        --publish 8259:80 \
+        --volume ${GIT_REPOSITORY_DIR}/static:/usr/share/nginx/html:ro \
+        nginx
     ```
 
     Visit [localhost:8259](http://localhost:8259)
