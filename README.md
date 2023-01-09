@@ -101,6 +101,19 @@ The following software programs need to be installed:
 
    View [localhost:3000](http://localhost:3000)
 
+### Local web development
+
+1. xxx
+   Example:
+
+    ```console
+
+docker run \
+   --publish 8259:80 \
+   --volume ${GIT_REPOSITORY_DIR}/static:/usr/share/nginx/html:ro \
+   nginx
+    ```
+
 ### Build docker image for development
 
 1. **Option #1:** Using `docker` command and GitHub.
