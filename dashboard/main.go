@@ -1,6 +1,8 @@
-package service
+package dashboard
 
-import "context"
+import (
+	"context"
+)
 
 // ----------------------------------------------------------------------------
 // Types

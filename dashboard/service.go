@@ -1,15 +1,15 @@
 // The version package simply prints the version of the dashboard binary file.
-package service
+package dashboard
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/docktermj/dashboard/box"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/senzing/go-logging/logger"
@@ -28,6 +28,13 @@ type HttpServerImpl struct {
 }
 
 // ----------------------------------------------------------------------------
+// Variables
+// ----------------------------------------------------------------------------
+
+//go:embed static/*
+var content embed.FS
+
+// ----------------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------------
 
@@ -40,6 +47,10 @@ func viperAsJson() string {
 	return string(viperByteArray)
 }
 
+func fileName(Uri string) string {
+	return "static" + Uri
+}
+
 // ----------------------------------------------------------------------------
 // Routers
 // ----------------------------------------------------------------------------
@@ -48,7 +59,11 @@ func cssRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/css")
-		responseWriter.Write(box.Get(request.RequestURI))
+		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
+		if err != nil {
+			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
+		}
+		responseWriter.Write(fileBytes)
 	})
 	return router
 }
@@ -57,7 +72,11 @@ func pngRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/png")
-		responseWriter.Write(box.Get(request.RequestURI))
+		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
+		if err != nil {
+			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
+		}
+		responseWriter.Write(fileBytes)
 	})
 	return router
 }
@@ -65,7 +84,11 @@ func pngRouter() chi.Router {
 func includeRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
-		responseWriter.Write(box.Get(request.RequestURI))
+		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
+		if err != nil {
+			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
+		}
+		responseWriter.Write(fileBytes)
 	})
 	return router
 }
@@ -74,7 +97,11 @@ func jsRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/javascript")
-		responseWriter.Write(box.Get(request.RequestURI))
+		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
+		if err != nil {
+			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
+		}
+		responseWriter.Write(fileBytes)
 	})
 	return router
 }
@@ -83,26 +110,24 @@ func svgRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "image/svg+xml")
-		responseWriter.Write(box.Get(request.RequestURI))
+		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
+		if err != nil {
+			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
+		}
+		responseWriter.Write(fileBytes)
 	})
 	return router
 }
 
 func webRouter() chi.Router {
-	handler := &WebHandler{}
 	router := chi.NewRouter()
-	router.Get("/all", handler.all)
-	router.Get("/duplicates/sha256", handler.duplicatesSha256)
-	router.Get("/id/{id}", handler.id)
-	router.Get("/modified/{modified}", handler.modified)
-	router.Get("/name/{name}", handler.name)
-	router.Get("/path/{path}", handler.path)
-	router.Get("/scan", handler.scan)
-	router.Get("/sha256/{sha256}", handler.sha256)
-	router.Get("/size/{size}", handler.size)
-	router.Get("/unique/sha256", handler.uniqueSha256)
-	router.Get("/volume/{volume}", handler.volume)
-	router.Get("/*", handler.staticHtml)
+	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
+		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
+		if err != nil {
+			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
+		}
+		responseWriter.Write(fileBytes)
+	})
 	return router
 }
 
@@ -152,11 +177,20 @@ func (httpServer *HttpServerImpl) Serve(ctx context.Context) error {
 
 	router.Get("/favicon.ico", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "image/x-icon")
-		responseWriter.Write(box.Get("/img/favicon.ico"))
+		fileBytes, err := content.ReadFile("static/img/favicon.ico")
+		if err != nil {
+			fmt.Printf(">>>>>>>>>>>> Error reading: %s\n", request.RequestURI)
+		}
+		responseWriter.Write(fileBytes)
 	})
 
 	router.Get("/", func(responseWriter http.ResponseWriter, request *http.Request) {
-		responseWriter.Write(box.Get("/web/index.html"))
+
+		fileBytes, err := content.ReadFile("static/web/index.html")
+		if err != nil {
+			fmt.Printf(">>>>>>>>>>>> Error reading: %s\n", request.RequestURI)
+		}
+		responseWriter.Write(fileBytes)
 	})
 
 	// Start router.
