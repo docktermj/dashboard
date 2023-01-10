@@ -21,6 +21,7 @@ The following software programs need to be installed:
     export GIT_REPOSITORY=dashboard
     export GIT_ACCOUNT_DIR=~/${GIT_ACCOUNT}.git
     export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
+
     ```
 
 1. Follow steps in [clone-repository](https://github.com/docktermj/KnowledgeBase/blob/master/HowTo/clone-repository.md) to install the Git repository.
@@ -38,41 +39,14 @@ The following software programs need to be installed:
 
 ### Local development
 
-1. Generate `.go` files.
-   In particular, static files.
+1. Run code.
    Example:
 
     ```console
     cd ${GIT_REPOSITORY_DIR}
-    make generate
+    make run
+
     ```
-
-   This makes `box/blob.go`.
-
-1. Build binary.
-   Example:
-
-    ```console
-    cd ${GIT_REPOSITORY_DIR}
-    make build
-    ```
-
-1. Run binary.
-   Example:
-
-    ```console
-    ${GIT_REPOSITORY_DIR}/target/linux/dashboard --help
-    ```
-
-1. Run service.
-   Example:
-
-    ```console
-    cd ${GIT_REPOSITORY_DIR}
-    ./target/linux/dashboard
-    ```
-
-   View [localhost:3000](http://localhost:3000)
 
 ### Local web development
 
@@ -85,37 +59,40 @@ The following software programs need to be installed:
         --publish 8259:80 \
         --volume ${GIT_REPOSITORY_DIR}/dashboard/static:/usr/share/nginx/html:ro \
         nginx
+
     ```
 
     Visit [localhost:8259](http://localhost:8259)
 
-### Build docker image for development
+### Build binary
 
-1. **Option #1:** Using `docker` command and GitHub.
-
-    ```console
-    sudo docker build \
-      --tag senzing/stream-loader \
-      https://github.com/senzing/stream-loader.git
-    ```
-
-   View service at [localhost:3000](http://localhost:3000)
-
-1. **Option #2:** Using `docker` command and local repository.
+1. Build binary.
+   Example:
 
     ```console
     cd ${GIT_REPOSITORY_DIR}
-    sudo docker build --tag senzing/stream-loader .
+    make build
+
     ```
 
-1. **Option #3:** Using `make` command.
+1. Run binary.
+   Example:
+
+    ```console
+    ${GIT_REPOSITORY_DIR}/target/linux/dashboard --help
+
+    ```
+
+1. Run service.
+   Example:
 
     ```console
     cd ${GIT_REPOSITORY_DIR}
-    sudo make docker-build
+    ./target/linux/dashboard
+
     ```
 
-    Note: `sudo make docker-build-development-cache` can be used to create cached docker layers.
+   View [localhost:8259](http://localhost:8259)
 
 ### Get static files
 
