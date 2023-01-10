@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/docktermj/dashboard/service"
+	"github.com/docktermj/dashboard/dashboard"
 	"github.com/senzing/go-logging/logger"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -43,7 +43,7 @@ var RootCmd = &cobra.Command{
 			logLevel = logger.LevelInfo
 		}
 
-		httpServer := &service.HttpServerImpl{
+		httpServer := &dashboard.DashboardImpl{
 			Port:     viper.GetInt("dashboard-port"),
 			LogLevel: logLevel,
 		}

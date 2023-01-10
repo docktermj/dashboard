@@ -1,12 +1,14 @@
-package service
+package dashboard
 
-import "context"
+import (
+	"context"
+)
 
 // ----------------------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------------------
 
-type HttpServer interface {
+type Dashboard interface {
 	Serve(ctx context.Context) error
 }
 
@@ -27,6 +29,7 @@ var IdMessages = map[int]string{
 	2001: "SENZING_ENGINE_CONFIGURATION_JSON: %v",
 	2002: "Enabling all services",
 	2003: "Server listening on port %v",
+	3001: "Error reading file: %s",
 	4001: "Call to net.Listen(tcp, %s) failed.",
 	5001: "Failed to serve.",
 }
