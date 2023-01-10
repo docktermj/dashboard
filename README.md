@@ -26,8 +26,6 @@ The following software programs need to be installed:
 
 1. Follow steps in [clone-repository](https://github.com/docktermj/KnowledgeBase/blob/master/HowTo/clone-repository.md) to install the Git repository.
 
-1. View [localhost:6060/pkg/cmd/](http://localhost:6060/pkg/cmd/).
-
 ### Local development
 
 1. Run code.
@@ -83,9 +81,9 @@ The following software programs need to be installed:
 
     ```
 
-   View [localhost:8259](http://localhost:8259)
+   Visit [localhost:8259](http://localhost:8259)
 
-### Get static files
+### How to update static files
 
 1. Set these environment variable values:
 
