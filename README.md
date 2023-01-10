@@ -26,15 +26,6 @@ The following software programs need to be installed:
 
 1. Follow steps in [clone-repository](https://github.com/docktermj/KnowledgeBase/blob/master/HowTo/clone-repository.md) to install the Git repository.
 
-### View godoc
-
-1. View godoc documentation.
-
-    ```console
-    cd ${GIT_REPOSITORY_DIR}
-    ./godoc-docker.sh
-    ```
-
 1. View [localhost:6060/pkg/cmd/](http://localhost:6060/pkg/cmd/).
 
 ### Local development
