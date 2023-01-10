@@ -43,7 +43,7 @@ var RootCmd = &cobra.Command{
 			logLevel = logger.LevelInfo
 		}
 
-		httpServer := &dashboard.HttpServerImpl{
+		httpServer := &dashboard.DashboardImpl{
 			Port:     viper.GetInt("dashboard-port"),
 			LogLevel: logLevel,
 		}

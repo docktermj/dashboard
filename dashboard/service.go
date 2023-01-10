@@ -4,7 +4,6 @@ package dashboard
 import (
 	"context"
 	"embed"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -14,17 +13,17 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/senzing/go-logging/logger"
 	"github.com/senzing/go-logging/messagelogger"
-	"github.com/spf13/viper"
 )
 
 // ----------------------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------------------
 
-// ServiceImpl is the default implementation of the Service interface.
-type HttpServerImpl struct {
+// DashboardImpl is the default implementation of the Dashboard interface.
+type DashboardImpl struct {
 	Port     int
 	LogLevel logger.Level
+	logger   messagelogger.MessageLoggerInterface
 }
 
 // ----------------------------------------------------------------------------
@@ -38,95 +37,78 @@ var content embed.FS
 // Helper functions
 // ----------------------------------------------------------------------------
 
-func viperAsJson() string {
-	viperConfig := viper.AllSettings()
-	viperByteArray, err := json.Marshal(viperConfig)
-	if err != nil {
-		fmt.Printf("Unable to marshal viper config to JSON: %v", err)
-	}
-	return string(viperByteArray)
-}
-
 func fileName(Uri string) string {
 	return "static" + Uri
+}
+
+// ----------------------------------------------------------------------------
+// Helper methods
+// ----------------------------------------------------------------------------
+
+func (dashboard *DashboardImpl) contentReadFileError(request *http.Request, err error) {
+	dashboard.logger.Log(3001, request.RequestURI, request, err)
+}
+
+func (dashboard *DashboardImpl) writeResponse(responseWriter http.ResponseWriter, request *http.Request) {
+	fileBytes, err := content.ReadFile(fileName(request.RequestURI))
+	if err != nil {
+		dashboard.contentReadFileError(request, err)
+	}
+	responseWriter.Write(fileBytes)
 }
 
 // ----------------------------------------------------------------------------
 // Routers
 // ----------------------------------------------------------------------------
 
-func cssRouter() chi.Router {
+func (dashboard *DashboardImpl) cssRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/css")
-		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
-		if err != nil {
-			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
-		}
-		responseWriter.Write(fileBytes)
+		dashboard.writeResponse(responseWriter, request)
 	})
 	return router
 }
 
-func pngRouter() chi.Router {
+func (dashboard *DashboardImpl) pngRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/png")
-		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
-		if err != nil {
-			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
-		}
-		responseWriter.Write(fileBytes)
+		dashboard.writeResponse(responseWriter, request)
 	})
 	return router
 }
 
-func includeRouter() chi.Router {
+func (dashboard *DashboardImpl) includeRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
-		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
-		if err != nil {
-			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
-		}
-		responseWriter.Write(fileBytes)
+		dashboard.writeResponse(responseWriter, request)
 	})
 	return router
 }
 
-func jsRouter() chi.Router {
+func (dashboard *DashboardImpl) jsRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/javascript")
-		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
-		if err != nil {
-			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
-		}
-		responseWriter.Write(fileBytes)
+		dashboard.writeResponse(responseWriter, request)
 	})
 	return router
 }
 
-func svgRouter() chi.Router {
+func (dashboard *DashboardImpl) svgRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "image/svg+xml")
-		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
-		if err != nil {
-			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
-		}
-		responseWriter.Write(fileBytes)
+		dashboard.writeResponse(responseWriter, request)
 	})
 	return router
 }
 
-func webRouter() chi.Router {
+func (dashboard *DashboardImpl) webRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Get("/*", func(responseWriter http.ResponseWriter, request *http.Request) {
-		fileBytes, err := content.ReadFile(fileName(request.RequestURI))
-		if err != nil {
-			fmt.Printf(">>>> Error reading file: %s\n", fileName(request.RequestURI))
-		}
-		responseWriter.Write(fileBytes)
+		dashboard.writeResponse(responseWriter, request)
 	})
 	return router
 }
@@ -136,17 +118,17 @@ func webRouter() chi.Router {
 // ----------------------------------------------------------------------------
 
 // Print a version string.
-func (httpServer *HttpServerImpl) Serve(ctx context.Context) error {
+func (dashboard *DashboardImpl) Serve(ctx context.Context) error {
 	var err error = nil
-	logger, _ := messagelogger.NewSenzingApiLogger(ProductId, IdMessages, IdStatuses, httpServer.LogLevel)
+	dashboard.logger, _ = messagelogger.NewSenzingApiLogger(ProductId, IdMessages, IdStatuses, dashboard.LogLevel)
 
 	// Print information for user.
 
-	fmt.Printf("\n"+IdMessages[2003]+"\n\n", httpServer.Port)
+	fmt.Printf("\n"+IdMessages[2003]+"\n\n", dashboard.Port)
 
 	// Log entry parameters.
 
-	logger.Log(2000, httpServer)
+	dashboard.logger.Log(2000, dashboard)
 
 	// Set up a router to route http request.
 
@@ -166,36 +148,35 @@ func (httpServer *HttpServerImpl) Serve(ctx context.Context) error {
 
 	// Routes
 
-	router.Mount("/css", cssRouter())
-	router.Mount("/js", jsRouter())
-	router.Mount("/png", pngRouter())
-	router.Mount("/include", includeRouter())
-	router.Mount("/svg", svgRouter())
-	router.Mount("/web", webRouter())
+	router.Mount("/css", dashboard.cssRouter())
+	router.Mount("/js", dashboard.jsRouter())
+	router.Mount("/png", dashboard.pngRouter())
+	router.Mount("/include", dashboard.includeRouter())
+	router.Mount("/svg", dashboard.svgRouter())
+	router.Mount("/web", dashboard.webRouter())
 
 	// Specific URIs.
 
 	router.Get("/favicon.ico", func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "image/x-icon")
-		fileBytes, err := content.ReadFile("static/img/favicon.ico")
+		fileBytes, err := content.ReadFile(fileName("/img/favicon.ico"))
 		if err != nil {
-			fmt.Printf(">>>>>>>>>>>> Error reading: %s\n", request.RequestURI)
+			dashboard.contentReadFileError(request, err)
 		}
 		responseWriter.Write(fileBytes)
 	})
 
 	router.Get("/", func(responseWriter http.ResponseWriter, request *http.Request) {
-
-		fileBytes, err := content.ReadFile("static/web/index.html")
+		fileBytes, err := content.ReadFile(fileName("/web/index.html"))
 		if err != nil {
-			fmt.Printf(">>>>>>>>>>>> Error reading: %s\n", request.RequestURI)
+			dashboard.contentReadFileError(request, err)
 		}
 		responseWriter.Write(fileBytes)
 	})
 
 	// Start router.
 
-	http.ListenAndServe(":"+strconv.Itoa(httpServer.Port), router)
+	http.ListenAndServe(":"+strconv.Itoa(dashboard.Port), router)
 
 	return err
 }

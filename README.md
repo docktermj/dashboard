@@ -83,7 +83,7 @@ The following software programs need to be installed:
     ```console
     docker run \
         --publish 8259:80 \
-        --volume ${GIT_REPOSITORY_DIR}/static:/usr/share/nginx/html:ro \
+        --volume ${GIT_REPOSITORY_DIR}/dashboard/static:/usr/share/nginx/html:ro \
         nginx
     ```
 
