@@ -23,7 +23,6 @@ CC = gcc
 # Conditional assignment. ('?=')
 
 SENZING_G2_DIR ?= /opt/senzing/g2
-# SENZING_DATABASE_URL ?= postgresql://postgres:postgres@127.0.0.1:5432/G2
 
 # Exports
 
@@ -42,16 +41,7 @@ default: help
 
 # Flags for the C compiler
 
-LD_LIBRARY_PATH = ${SENZING_G2_DIR}/lib
-
-# -----------------------------------------------------------------------------
-# Make files
-# -----------------------------------------------------------------------------
-
-.PHONY: generate
-generate:
-	@go generate ./...
-	@echo "[OK] Files added to embed box!"
+LD_LIBRARY_PATH ?= ${SENZING_G2_DIR}/lib
 
 # -----------------------------------------------------------------------------
 # Build
@@ -85,7 +75,13 @@ build-linux:
 
 .PHONY: test
 test:
-	go test $(GO_PACKAGE_NAME)/...
+	@rm -rf /tmp/sqlite
+	@mkdir  /tmp/sqlite
+	@cp testdata/sqlite/G2C.db /tmp/sqlite/G2C.db
+#	@go test -v -p 1 ./...
+#	@go test -v ./.
+#	@go test -v ./factory
+
 
 # -----------------------------------------------------------------------------
 # docker-build
@@ -116,6 +112,7 @@ docker-build-package:
 		--file package.Dockerfile \
 		--tag $(DOCKER_BUILD_IMAGE_NAME) \
 		.
+
 
 # -----------------------------------------------------------------------------
 # Package

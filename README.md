@@ -83,6 +83,124 @@ The following software programs need to be installed:
 
    Visit [localhost:8259](http://localhost:8259)
 
+### Package
+
+#### Package RPM and DEB files
+
+1. Use make target to run a docker images that builds RPM and DEB files.
+   Example:
+
+    ```console
+    cd ${GIT_REPOSITORY_DIR}
+    make package
+
+    ```
+
+1. The results will be in the `${GIT_REPOSITORY_DIR}/target` directory.
+   Example:
+
+    ```console
+    tree ${GIT_REPOSITORY_DIR}/target
+
+    ```
+
+#### Test DEB package on Ubuntu
+
+1. Determine if `dashboard` is installed.
+   Example:
+
+    ```console
+    apt list --installed | grep dashboard
+
+    ```
+
+1. :pencil2: Install `dashboard`.
+   Example:
+
+    ```console
+    cd ${GIT_REPOSITORY_DIR}/target
+    sudo apt install ./dashboard-0.0.0.deb
+
+    ```
+
+1. Run command.
+   Example:
+
+    ```console
+    export LD_LIBRARY_PATH=/opt/senzing/g2/lib/
+    dashboard
+
+    ```
+
+1. Remove `dashboard` from system.
+   Example:
+
+    ```console
+    sudo apt-get remove dashboard
+
+    ```
+
+#### Test RPM package on Centos
+
+1. Determine if `dashboard` is installed.
+   Example:
+
+    ```console
+    yum list installed | grep dashboard
+
+    ```
+
+1. :pencil2: Install `dashboard`.
+   Example:
+
+    ```console
+    cd ${GIT_REPOSITORY_DIR}/target
+    sudo yum install ./dashboard-0.0.0.rpm
+
+    ```
+
+1. Run command.
+   Example:
+
+    ```console
+    export LD_LIBRARY_PATH=/opt/senzing/g2/lib/
+    dashboard
+
+    ```
+
+1. Remove `dashboard` from system.
+   Example:
+
+    ```console
+    sudo yum remove dashboard
+
+    ```
+
+### Make documents
+
+Make documents visible at
+[hub.senzing.com/dashboard](https://hub.senzing.com/dashboard).
+
+1. Identify repository.
+   Example:
+
+    ```console
+    export GIT_ACCOUNT=senzing
+    export GIT_REPOSITORY=dashboard
+    export GIT_ACCOUNT_DIR=~/${GIT_ACCOUNT}.git
+    export GIT_REPOSITORY_DIR="${GIT_ACCOUNT_DIR}/${GIT_REPOSITORY}"
+
+    ```
+
+1. Make documents.
+   Example:
+
+    ```console
+    export LD_LIBRARY_PATH=/opt/senzing/g2/lib/
+    dashboard docs --dir ${GIT_REPOSITORY_DIR}/docs
+
+    ```
+
 ### How to update static files
 
 1. Set these environment variable values:
