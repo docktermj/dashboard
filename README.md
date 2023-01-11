@@ -132,6 +132,8 @@ The following software programs need to be installed:
 
     ```
 
+   Visit [localhost:8259](http://localhost:8259)
+
 1. Remove `dashboard` from system.
    Example:
 
