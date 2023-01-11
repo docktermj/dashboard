@@ -246,3 +246,22 @@ Make documents visible at
         https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
 
    ```
+
+1. Dashboard.
+   Example:
+
+    ```console
+        export BOOTSTRAP_VERSION=5.2.3
+
+        wget \
+        --output-document /tmp/bootstrap-${BOOTSTRAP_VERSION}-examples.zip \
+        https://github.com/twbs/bootstrap/releases/download/v${BOOTSTRAP_VERSION}/bootstrap-${BOOTSTRAP_VERSION}-examples.zip
+
+        unzip \
+            /tmp/bootstrap-${BOOTSTRAP_VERSION}-examples.zip \
+            -d /tmp
+
+        cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-examples/dashboard/dashboard.css  ${GIT_REPOSITORY_DIR}/dashboard/static/css/dashboard.css
+        cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-examples/dashboard/dashboard.js   ${GIT_REPOSITORY_DIR}/dashboard/static/js/dashboard.js
+
+    ```
