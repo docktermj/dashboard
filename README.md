@@ -220,11 +220,15 @@ Make documents visible at
 
     ```console
     wget \
-        --output-document ${GIT_REPOSITORY_DIR}/static/css/bootstrap.min.css \
+        --output-document ${GIT_REPOSITORY_DIR}/dashboard/static/css/bootstrap.min.css \
         https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css
 
     wget \
-        --output-document ${GIT_REPOSITORY_DIR}/static/js/bootstrap.bundle.min.js \
+        --output-document ${GIT_REPOSITORY_DIR}/dashboard/static/css/bootstrap.min.css.map \
+        https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css.map
+
+    wget \
+        --output-document ${GIT_REPOSITORY_DIR}/dashboard/static/js/bootstrap.bundle.min.js \
         https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js
 
    ```
@@ -234,15 +238,15 @@ Make documents visible at
 
     ```console
     wget \
-        --output-document ${GIT_REPOSITORY_DIR}/static/js/jquery.min.js \
+        --output-document ${GIT_REPOSITORY_DIR}/dashboard/static/js/jquery.min.js \
         https://code.jquery.com/jquery-3.6.3.min.js
 
     wget \
-        --output-document ${GIT_REPOSITORY_DIR}/static/css/jquery.dataTables.min.css \
+        --output-document ${GIT_REPOSITORY_DIR}/dashboard/static/css/jquery.dataTables.min.css \
         https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css
 
     wget \
-        --output-document ${GIT_REPOSITORY_DIR}/static/js/jquery.dataTables.min.js \
+        --output-document ${GIT_REPOSITORY_DIR}/dashboard/static/js/jquery.dataTables.min.js \
         https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js
 
    ```
@@ -263,5 +267,15 @@ Make documents visible at
 
         cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-examples/dashboard/dashboard.css  ${GIT_REPOSITORY_DIR}/dashboard/static/css/dashboard.css
         cp --force /tmp/bootstrap-${BOOTSTRAP_VERSION}-examples/dashboard/dashboard.js   ${GIT_REPOSITORY_DIR}/dashboard/static/js/dashboard.js
+
+    ```
+
+1. Feather icons.
+   Example:
+
+    ```console
+    wget \
+        --output-document ${GIT_REPOSITORY_DIR}/dashboard/static/js/feather.min.js \
+        https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js
 
     ```
