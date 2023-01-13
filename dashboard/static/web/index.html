@@ -22,38 +22,74 @@
           <ul class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="#">
-                <span data-feather="home" class="align-text-bottom"></span>
-                Dashboard
+                <span data-feather="eye" class="align-text-bottom"></span>
+                Overview
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">
-                <span data-feather="file" class="align-text-bottom"></span>
-                Orders
+                <span data-feather="user" class="align-text-bottom"></span>
+                Profile
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">
-                <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                Products
+                <span data-feather="download" class="align-text-bottom"></span>
+                Install
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">
-                <span data-feather="users" class="align-text-bottom"></span>
-                Customers
+                <span data-feather="settings" class="align-text-bottom"></span>
+                Configure
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">
-                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
-                Reports
+                <span data-feather="map" class="align-text-bottom"></span>
+                Map
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="arrow-right-circle" class="align-text-bottom"></span>
+                Move
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">
                 <span data-feather="layers" class="align-text-bottom"></span>
-                Integrations
+                Load
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="refresh-cw" class="align-text-bottom"></span>
+                Redo
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="server" class="align-text-bottom"></span>
+                Serve
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                View
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="search" class="align-text-bottom"></span>
+                Explore
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="help-circle" class="align-text-bottom"></span>
+                Help
               </a>
             </li>
           </ul>
@@ -96,22 +132,30 @@
     </div>
   </div>
 
-  <!-- Breadcrumb trail ------------------------------------------------------>
+  <!-- Breadcrumb trail and Profile selector --------------------------------->
 
-  <div class="container">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Home1</li>
-        <li class="breadcrumb-item active" aria-current="page">Home2</li>
-        <li class="breadcrumb-item active" aria-current="page">Home3</li>
-        <li class="breadcrumb-item active" aria-current="page">Home4</li>
-        <li class="breadcrumb-item active" aria-current="page">Home5</li>
-        <li class="breadcrumb-item active" aria-current="page">Home6</li>
-        <li class="breadcrumb-item active" aria-current="page">Home7</li>
-        <li class="breadcrumb-item active" aria-current="page">Home8</li>
-      </ol>
-    </nav>
-  </div>
+  <main class="col-md-9 ms-sm-auto col-lg-10 ">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center  mb-2 pe-3 border-bottom">
+      <div class="container pt-3">
+        <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page">Home</li>
+          </ol>
+        </nav>
+      </div>
+      <div class="nav-item navbar-right pe-2">
+        Profile:
+      </div>
+      <select class="custom-select">
+        <option selected disabled>Choose a profile</option>
+        <option value="Local database">Local database</option>
+        <option value="Postgres Database">Postgres Database</option>
+        <option value="gRPC to test system">gRPC to test system</option>
+        <option class="divider" disabled>-------------------</option>
+        <option value="Create a new profile">Create a new profile</option>
+      </select>
+    </div>
+  </main>
 
   <div w3-include-html="/include/footer.html"></div>
 

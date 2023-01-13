@@ -6,33 +6,131 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>senzing-tools</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/final.css">
 </head>
 
 <body>
   <div w3-include-html="/include/menu-bar.html"></div>
 
-  <div class="container">
+  <!-- Side-bar -------------------------------------------------------------->
 
-    <!-- Breadcrumb trail ---------------------------------------------------->
+  <div class="container-fluid">
+    <div class="row">
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+        <div class="position-sticky pt-3 sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">
+                <span data-feather="eye" class="align-text-bottom"></span>
+                Overview
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file" class="align-text-bottom"></span>
+                Orders
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="users" class="align-text-bottom"></span>
+                Customers
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                Reports
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="layers" class="align-text-bottom"></span>
+                Integrations
+              </a>
+            </li>
+          </ul>
 
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Profile</li>
-        </ol>
+          <h6
+            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+            <span>Saved reports</span>
+            <a class="link-secondary" href="#" aria-label="Add a new report">
+              <span data-feather="plus-circle" class="align-text-bottom"></span>
+            </a>
+          </h6>
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Current month
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Last quarter
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Social engagement
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text" class="align-text-bottom"></span>
+                Year-end sale
+              </a>
+            </li>
+          </ul>
+        </div>
       </nav>
     </div>
-
   </div>
+
+  <!-- Breadcrumb trail and Profile selector --------------------------------->
+
+  <main class="col-md-9 ms-sm-auto col-lg-10 ">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center  mb-2 pe-3 border-bottom">
+      <div class="container pt-3">
+        <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>';">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item " aria-current="page"><a href="/web/index.html">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Profile</li>
+          </ol>
+        </nav>
+      </div>
+      <div class="nav-item navbar-right pe-2">
+        Profile:
+      </div>
+      <select class="custom-select">
+        <option selected disabled>Choose a profile</option>
+        <option value="Local database">Local database</option>
+        <option value="Postgres Database">Postgres Database</option>
+        <option value="gRPC to test system">gRPC to test system</option>
+        <option class="divider" disabled>-------------------</option>
+        <option value="Create a new profile">Create a new profile</option>
+      </select>
+    </div>
+  </main>
 
   <div w3-include-html="/include/footer.html"></div>
 
   <!-- Javascript ------------------------------------------------------------>
 
-  <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
   <script type="text/javascript" src="/js/include-html.js"></script>
   <script type="text/javascript">includeHTML();</script>
+  <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/js/feather.min.js"></script>
+  <script type="text/javascript" src="/js/dashboard.js"></script>
 </body>
 
 </html>
