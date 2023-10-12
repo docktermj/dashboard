@@ -11,8 +11,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/senzing/go-logging/logger"
-	"github.com/senzing/go-logging/messagelogger"
+	"github.com/pkg/browser"
+	"github.com/senzing/go-logging/logging"
 )
 
 // ----------------------------------------------------------------------------
@@ -21,9 +21,9 @@ import (
 
 // DashboardImpl is the default implementation of the Dashboard interface.
 type DashboardImpl struct {
-	Port     int
-	LogLevel logger.Level
-	logger   messagelogger.MessageLoggerInterface
+	ServerPort int
+	TtyOnly    bool
+	logger     logging.LoggingInterface
 }
 
 // ----------------------------------------------------------------------------
@@ -119,12 +119,11 @@ func (dashboard *DashboardImpl) webRouter() chi.Router {
 
 // Print a version string.
 func (dashboard *DashboardImpl) Serve(ctx context.Context) error {
-	var err error = nil
-	dashboard.logger, _ = messagelogger.NewSenzingApiLogger(ProductId, IdMessages, IdStatuses, dashboard.LogLevel)
+	dashboard.logger, _ = logging.New()
 
 	// Print information for user.
 
-	fmt.Printf("\n"+IdMessages[2003]+"\n\n", dashboard.Port)
+	fmt.Printf("\n"+IdMessages[2003]+"\n\n", dashboard.ServerPort)
 
 	// Log entry parameters.
 
@@ -174,9 +173,14 @@ func (dashboard *DashboardImpl) Serve(ctx context.Context) error {
 		responseWriter.Write(fileBytes)
 	})
 
+	// Start a web browser.  Unless disabled.
+
+	if !dashboard.TtyOnly {
+		_ = browser.OpenURL(fmt.Sprintf("http://localhost:%d", dashboard.ServerPort))
+	}
+
 	// Start router.
 
-	http.ListenAndServe(":"+strconv.Itoa(dashboard.Port), router)
+	return http.ListenAndServe(":"+strconv.Itoa(dashboard.ServerPort), router)
 
-	return err
 }

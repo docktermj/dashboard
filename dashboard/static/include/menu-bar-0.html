@@ -1,7 +1,7 @@
-<header class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/">senzing-tools</a>
-    <div class="navbar-nav me-auto mb-2 mb-lg-0">
+<div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid">
+            <a class="navbar-brand" href="/">senzing-tools</a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item dropdown">
@@ -10,7 +10,7 @@
                             Profile
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/web/profile/index.html">Overview</a></li>
+                            <li><a class="dropdown-item" href="#">Profiles</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -153,17 +153,11 @@
                         </ul>
                     </li>
                 </ul>
-
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
             </div>
         </div>
-
-    </div>
-    <div class="navbar-nav">
-        <div class="nav-item navbar-right">
-            <form class="d-flex" role="search">
-                <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search"
-                    aria-label="Search">
-            </form>
-        </div>
-    </div>
-</header>
+    </nav>
+</div>
