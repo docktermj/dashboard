@@ -17,7 +17,7 @@ type Dashboard interface {
 // ----------------------------------------------------------------------------
 
 // Identfier of the  package found messages having the format "senzing-6204xxxx".
-const ProductId = 6204
+const ComponentId = 6204
 
 // ----------------------------------------------------------------------------
 // Variables

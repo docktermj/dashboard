@@ -1,61 +1,54 @@
+/*
+ */
 package cmd
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"os"
-	"strings"
 
 	"github.com/docktermj/dashboard/dashboard"
-	"github.com/senzing/go-logging/logger"
+	"github.com/senzing/go-cmdhelping/cmdhelper"
+	"github.com/senzing/go-cmdhelping/option"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	configurationFile string
-	buildVersion      string = "0.0.0"
-	buildIteration    string = "0"
+const (
+	Short string = "Bring up the Senzing dashboard"
+	Use   string = "dashboard"
+	Long  string = `
+For more information, visit https://github.com/Senzing/dashboard
+    `
 )
 
-func makeVersion(version string, iteration string) string {
-	var result string = ""
-	if buildIteration == "0" {
-		result = version
-	} else {
-		result = fmt.Sprintf("%s-%s", buildVersion, buildIteration)
-	}
-	return result
+// ----------------------------------------------------------------------------
+// Context variables
+// ----------------------------------------------------------------------------
+
+var ContextVariablesForMultiPlatform = []option.ContextVariable{
+	option.Configuration,
+	option.EngineConfigurationJson,
+	option.HttpPort,
+	option.LogLevel,
 }
 
-// RootCmd represents the base command when called without any subcommands
-var RootCmd = &cobra.Command{
-	Use:   "dashboard",
-	Short: "Bring up the Senzing dashboard",
-	Long:  `For more information, visit https://github.com/Senzing/dashboard`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		var err error = nil
-		ctx := context.TODO()
+var ContextVariables = append(ContextVariablesForMultiPlatform, ContextVariablesForOsArch...)
 
-		logLevel, ok := logger.TextToLevelMap[viper.GetString("log-level")]
-		if !ok {
-			logLevel = logger.LevelInfo
-		}
+// ----------------------------------------------------------------------------
+// Private functions
+// ----------------------------------------------------------------------------
 
-		httpServer := &dashboard.DashboardImpl{
-			Port:     viper.GetInt("dashboard-port"),
-			LogLevel: logLevel,
-		}
-		httpServer.Serve(ctx)
-
-		return err
-	},
-	Version: makeVersion(buildVersion, buildIteration),
+// Since init() is always invoked, define command line parameters.
+func init() {
+	cmdhelper.Init(RootCmd, ContextVariables)
 }
+
+// ----------------------------------------------------------------------------
+// Public functions
+// ----------------------------------------------------------------------------
 
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() {
 	err := RootCmd.Execute()
 	if err != nil {
@@ -63,66 +56,36 @@ func Execute() {
 	}
 }
 
-func init() {
-	cobra.OnInitialize(initConfig)
-
-	// Define flags for command.
-
-	RootCmd.Flags().Int("dashboard-port", 8259, "port used to serve HTTP [SENZING_TOOLS_DASHBOARD_PORT]")
-
-	// Integrate with Viper.
-
-	replacer := strings.NewReplacer("-", "_")
-	viper.SetEnvKeyReplacer(replacer)
-	viper.SetEnvPrefix("SENZING_TOOLS")
-
-	// Define flags in Viper.
-
-	viper.SetDefault("dashboard-port", 8259)
-	viper.BindPFlag("dashboard-port", RootCmd.Flags().Lookup("dashboard-port"))
-
-	viper.SetDefault("log-level", "INFO")
-	viper.BindPFlag("log-level", RootCmd.Flags().Lookup("log-level"))
-
-	// Set version template.
-
-	versionTemplate := `{{printf "%s: %s - version %s\n" .Name .Short .Version}}`
-	RootCmd.SetVersionTemplate(versionTemplate)
-
+// Used in construction of cobra.Command
+func PreRun(cobraCommand *cobra.Command, args []string) {
+	cmdhelper.PreRun(cobraCommand, args, Use, ContextVariables)
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
+// Used in construction of cobra.Command
+func RunE(_ *cobra.Command, _ []string) error {
+	ctx := context.TODO()
 
-	// Set logging output format.
-
-	log.SetFlags(log.Lshortfile | log.Ldate | log.Lmicroseconds | log.LUTC)
-
-	// Load configuration file.
-
-	if configurationFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(configurationFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".servegrpc" (without extension).
-		viper.AddConfigPath(home + "/.senzing-tools")
-		viper.AddConfigPath(home)
-		viper.AddConfigPath("/etc/senzing-tools")
-		viper.SetConfigType("yaml")
-		viper.SetConfigName("dashboard")
+	httpServer := &dashboard.DashboardImpl{
+		ServerPort: viper.GetInt(option.HttpPort.Arg),
 	}
+	return httpServer.Serve(ctx)
+}
 
-	// Read in environment variables that match "SENZING_TOOLS_*" pattern.
+// Used in construction of cobra.Command
+func Version() string {
+	return cmdhelper.Version(githubVersion, githubIteration)
+}
 
-	viper.AutomaticEnv()
+// ----------------------------------------------------------------------------
+// Command
+// ----------------------------------------------------------------------------
 
-	// If a config file is found, read it in.
-
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
-	}
+// RootCmd represents the command.
+var RootCmd = &cobra.Command{
+	Use:     Use,
+	Short:   Short,
+	Long:    Long,
+	PreRun:  PreRun,
+	RunE:    RunE,
+	Version: Version(),
 }

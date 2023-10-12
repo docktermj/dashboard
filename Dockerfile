@@ -1,112 +1,74 @@
-FROM centos:7.7.1908
+# -----------------------------------------------------------------------------
+# Stages
+# -----------------------------------------------------------------------------
 
-ENV REFRESHED_AT 2019-11-16
+ARG IMAGE_SENZINGAPI_RUNTIME=senzing/senzingapi-runtime:3.7.1
+ARG IMAGE_GO_BUILDER=golang:1.21.0-bullseye
+ARG IMAGE_FINAL=senzing/senzingapi-runtime:3.7.1
 
-# --- Install system packages -------------------------------------------------
+# -----------------------------------------------------------------------------
+# Stage: senzingapi_runtime
+# -----------------------------------------------------------------------------
 
-# Avoid "Error: libselinux conflicts with fakesystemd-1-17.el7.centos.noarch"
+FROM ${IMAGE_SENZINGAPI_RUNTIME} as senzingapi_runtime
 
-RUN yum -y swap fakesystemd systemd \
- && yum -y install systemd-devel \
- && yum clean all
+# -----------------------------------------------------------------------------
+# Stage: go_builder
+# -----------------------------------------------------------------------------
 
-RUN yum -y update
-
-# Install [base, ruby] dependencies.
-
-RUN yum -y install \
-    git \
-    tar \
-    wget \
- && yum -y install \
-    gcc \
-    glibc-static \
-    libseccomp-static \
-    make \
-    rpm-build \
-    ruby-devel \
-    rubygems \
-    which
-
-# Install Effing Package Manager (FPM).
-
-RUN gem install --no-ri --no-rdoc fpm
-
-# --- Install Go --------------------------------------------------------------
-
-ENV GO_VERSION=1.13.4
-
-RUN wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz \
- && tar -C /usr/local/ -xzf go${GO_VERSION}.linux-amd64.tar.gz
-
-# --- Compile go program ------------------------------------------------------
-
-ARG PROGRAM_NAME="unknown"
-ARG BUILD_VERSION=0.0.0
-ARG BUILD_ITERATION=0
-ARG GO_PACKAGE_NAME="unknown"
-
-ENV HOME="/root"
-ENV GOPATH="${HOME}/go"
-ENV PATH="${PATH}:/usr/local/go/bin:${GOPATH}/bin"
+FROM ${IMAGE_GO_BUILDER} as go_builder
+ENV REFRESHED_AT=2023-10-02
+LABEL Name="senzing/template-go-builder" \
+      Maintainer="support@senzing.com" \
+      Version="0.0.1"
 
 # Copy local files from the Git repository.
 
-COPY . ${GOPATH}/src/${GO_PACKAGE_NAME}
+COPY ./rootfs /
+COPY . ${GOPATH}/src/template-go
+
+# Copy files from prior stage.
+
+COPY --from=senzingapi_runtime  "/opt/senzing/g2/lib/"   "/opt/senzing/g2/lib/"
+COPY --from=senzingapi_runtime  "/opt/senzing/g2/sdk/c/" "/opt/senzing/g2/sdk/c/"
+
+# Set path to Senzing libs.
+
+ENV LD_LIBRARY_PATH=/opt/senzing/g2/lib/
 
 # Build go program.
 
-WORKDIR ${GOPATH}/src/${GO_PACKAGE_NAME}
-
-RUN mkdir ~/.ssh \
- && touch ~/.ssh/known_hosts \
- && ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-# Create Linux binary.
-
+WORKDIR ${GOPATH}/src/template-go
 RUN make build
 
-# Copy binaries to output.
+# Copy binaries to /output.
 
 RUN mkdir -p /output \
- && cp -R ${GOPATH}/src/${GO_PACKAGE_NAME}/target/*  /output/
+ && cp -R ${GOPATH}/src/template-go/target/*  /output/
 
-# --- Test go program ---------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Stage: final
+# -----------------------------------------------------------------------------
 
-# Run unit tests.
+FROM ${IMAGE_FINAL} as final
+ENV REFRESHED_AT=2023-08-01
+LABEL Name="senzing/template-go" \
+      Maintainer="support@senzing.com" \
+      Version="0.0.1"
 
-# RUN go get github.com/jstemmer/go-junit-report \
-#  && mkdir -p /output/go-junit-report \
-#  && go test -v ${GO_PACKAGE_NAME}/... | go-junit-report > /output/go-junit-report/test-report.xml
+# Copy local files from the Git repository.
 
-# --- Package as RPM and DEB --------------------------------------------------
+COPY ./rootfs /
 
-# RPM package.
+# Copy files from prior stage.
 
-RUN fpm \
-  --input-type dir \
-  --output-type rpm \
-  --name ${PROGRAM_NAME} \
-  --package /output/linux \
-  --version ${BUILD_VERSION} \
-  --iteration ${BUILD_ITERATION} \
-  /output/linux/go-fileindex=/usr/bin/fileindex
+COPY --from=go_builder "/output/linux-amd64/template-go" "/app/template-go"
 
+# Runtime environment variables.
 
-# DEB package.
+ENV LD_LIBRARY_PATH=/opt/senzing/g2/lib/
 
-RUN fpm \
-  --input-type dir \
-  --output-type deb \
-  --name ${PROGRAM_NAME} \
-  --package /output/linux \
-  --version ${BUILD_VERSION} \
-  --iteration ${BUILD_ITERATION} \
-  /output/linux/go-fileindex=/usr/bin/fileindex
+# Runtime execution.
 
-
-# --- Epilog ------------------------------------------------------------------
-
-RUN yum clean all
-
-CMD ["/bin/bash"]
+WORKDIR /app
+ENTRYPOINT ["/app/template-go"]
